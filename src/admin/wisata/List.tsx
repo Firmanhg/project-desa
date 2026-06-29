@@ -5,6 +5,8 @@ import DataTable, {
   type Column,
 } from "../../components/admin/DataTable";
 
+import TableSkeleton from "../../components/admin/TableSkeleton";
+
 import ConfirmDelete from "../../components/admin/ConfirmDelete";
 
 import {
@@ -17,7 +19,6 @@ import type { Wisata } from "../../types/wisata";
 export default function ListWisata() {
   const [wisata, setWisata] = useState<Wisata[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [search, setSearch] = useState("");
 
   const loadData = async () => {
@@ -126,6 +127,14 @@ export default function ListWisata() {
     },
   ];
 
+  if (loading) {
+    return (
+      <div className="p-6">
+        <TableSkeleton />
+      </div>
+    );
+  }
+
   return (
     <div className="p-6">
 
@@ -140,10 +149,11 @@ export default function ListWisata() {
         />
 
       </div>
+
       <DataTable
         title="Data Wisata"
         data={filteredWisata}
-        loading={loading}
+        loading={false}
         emptyMessage="Belum ada data wisata."
         addButton={
           <Link
