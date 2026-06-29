@@ -1,4 +1,5 @@
 import React from "react";
+import EmptyState from "./EmptyState";
 
 export interface Column<T> {
   header: string;
@@ -74,18 +75,22 @@ export default function DataTable<T>({
                 </td>
               </tr>
 
-            ) : data.length === 0 ? (
+) : data.length === 0 ? (
 
-              <tr>
-                <td
-                  colSpan={columns.length}
-                  className="py-12 text-center text-gray-500"
-                >
-                  {emptyMessage}
-                </td>
-              </tr>
+  <tr>
+    <td
+      colSpan={columns.length}
+      className="py-12"
+    >
+      <EmptyState
+        title="Belum Ada Data"
+        description={emptyMessage}
+        action={addButton}
+      />
+    </td>
+  </tr>
 
-            ) : (
+) : (
 
               data.map((item, rowIndex) => (
 

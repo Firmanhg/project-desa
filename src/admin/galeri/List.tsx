@@ -5,6 +5,8 @@ import DataTable, {
   type Column,
 } from "../../components/admin/DataTable";
 
+import TableSkeleton from "../../components/admin/TableSkeleton";
+
 import ConfirmDelete from "../../components/admin/ConfirmDelete";
 
 import {
@@ -17,7 +19,6 @@ import type { Galeri } from "../../types/galeri";
 export default function ListGaleri() {
   const [galeri, setGaleri] = useState<Galeri[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [search, setSearch] = useState("");
 
   const loadData = async () => {
@@ -105,6 +106,14 @@ export default function ListGaleri() {
     },
   ];
 
+  if (loading) {
+    return (
+      <div className="p-6">
+        <TableSkeleton />
+      </div>
+    );
+  }
+
   return (
     <div className="p-6">
 
@@ -119,10 +128,11 @@ export default function ListGaleri() {
         />
 
       </div>
+
       <DataTable
         title="Data Galeri"
         data={filteredGaleri}
-        loading={loading}
+        loading={false}
         emptyMessage="Belum ada data galeri."
         addButton={
           <Link

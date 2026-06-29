@@ -5,6 +5,8 @@ import DataTable, {
   type Column,
 } from "../../components/admin/DataTable";
 
+import TableSkeleton from "../../components/admin/TableSkeleton";
+
 import ConfirmDelete from "../../components/admin/ConfirmDelete";
 
 import {
@@ -17,7 +19,6 @@ import type { Komoditas } from "../../types/komoditas";
 export default function ListKomoditas() {
   const [komoditas, setKomoditas] = useState<Komoditas[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [search, setSearch] = useState("");
 
   const loadData = async () => {
@@ -121,6 +122,14 @@ export default function ListKomoditas() {
     },
   ];
 
+  if (loading) {
+    return (
+      <div className="p-6">
+        <TableSkeleton />
+      </div>
+    );
+  }
+
   return (
     <div className="p-6">
 
@@ -135,10 +144,11 @@ export default function ListKomoditas() {
         />
 
       </div>
+
       <DataTable
         title="Data Komoditas"
         data={filteredKomoditas}
-        loading={loading}
+        loading={false}
         emptyMessage="Belum ada data komoditas."
         addButton={
           <Link
