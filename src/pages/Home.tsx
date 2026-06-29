@@ -1,17 +1,37 @@
-import heroImage from "../assets/hero.jpg";
+import { useEffect, useState } from "react";
 
-import wisata1 from "../assets/wisata/kebun-duren.jpg";
-import wisata2 from "../assets/wisata/air-terjun.jpg";
-import wisata3 from "../assets/wisata/bukit.jpg";
-
-import duren from "../assets/komoditas/duren.jpg";
-import madu from "../assets/komoditas/madu.jpg";
-import duku from "../assets/komoditas/duku.jpg";
-import cokelat from "../assets/komoditas/cokelat.jpg";
+import { Link } from "react-router-dom";
 
 import FAQ from "../components/FAQ";
 
+import { getAllWisata } from "../services/wisataService";
+
+import type { Wisata } from "../types/wisata";
+
+const heroImage = "/hero.jpg";
+
+const duren = "/komoditas/duren.jpg";
+const madu = "/komoditas/madu.jpg";
+const duku = "/komoditas/duku.jpg";
+const cokelat = "/komoditas/cokelat.jpg";
+
 function Home() {
+  const [wisata, setWisata] = useState<Wisata[]>([]);
+
+  useEffect(() => {
+    const loadWisata = async () => {
+      try {
+        const data = await getAllWisata();
+
+        setWisata(data.slice(0, 3));
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    loadWisata();
+  }, []);
+
   return (
     <>
       {/* HERO */}
@@ -25,6 +45,7 @@ function Home() {
 
         <div className="relative z-10 h-full flex items-center justify-center px-6">
           <div className="text-center text-white max-w-5xl">
+
             <p className="uppercase tracking-[8px] text-yellow-400 mb-6">
               Lampung Selatan
             </p>
@@ -42,14 +63,23 @@ function Home() {
             </p>
 
             <div className="flex flex-col md:flex-row gap-4 justify-center mt-10">
-              <button className="bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-8 py-4 rounded-full">
-                Jelajahi Wisata
-              </button>
 
-              <button className="border border-white px-8 py-4 rounded-full hover:bg-white hover:text-black transition">
+              <Link
+                to="/wisata"
+                className="bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-8 py-4 rounded-full"
+              >
+                Jelajahi Wisata
+              </Link>
+
+              <Link
+                to="/umkm"
+                className="border border-white px-8 py-4 rounded-full hover:bg-white hover:text-black transition"
+              >
                 Lihat Komoditas
-              </button>
+              </Link>
+
             </div>
+
           </div>
         </div>
       </section>
@@ -59,6 +89,7 @@ function Home() {
         <div className="max-w-6xl mx-auto px-6">
 
           <div className="text-center">
+
             <p className="uppercase tracking-[6px] text-yellow-600">
               Tentang Desa
             </p>
@@ -66,9 +97,11 @@ function Home() {
             <h2 className="text-5xl font-bold mt-4 text-slate-800">
               Mengenal Karang Jaya
             </h2>
+
           </div>
 
           <div className="max-w-4xl mx-auto mt-10 text-center">
+
             <p className="text-lg text-gray-700 leading-relaxed">
               Desa Karang Jaya merupakan desa yang memiliki
               potensi wisata serta komoditas unggulan yang
@@ -79,6 +112,7 @@ function Home() {
               Karang Jaya menjadi salah satu desa dengan
               potensi ekonomi dan pariwisata yang terus berkembang.
             </p>
+
           </div>
 
         </div>
@@ -92,11 +126,11 @@ function Home() {
 
             <div className="bg-[#f8f6f1] rounded-3xl p-10 text-center">
               <h3 className="text-5xl font-bold text-green-800">
-                1+
+                {wisata.length}+
               </h3>
 
               <p className="mt-4 text-gray-600">
-                Wisata Utama
+                Wisata
               </p>
             </div>
 
@@ -135,78 +169,81 @@ function Home() {
         </div>
       </section>
 
-      {/* WISATA */}
-      <section className="bg-[#f8f6f1] py-24">
+            {/* WISATA */}
+            <section className="bg-[#f8f6f1] py-24">
         <div className="max-w-7xl mx-auto px-6">
 
           <div className="text-center mb-16">
+
             <p className="uppercase tracking-[6px] text-yellow-600">
               Wisata Unggulan
             </p>
 
             <h2 className="text-5xl font-bold mt-4">
-              Kebun Duren Karang Jaya
+              Jelajahi Wisata Karang Jaya
             </h2>
+
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
 
-            <div className="bg-white rounded-3xl overflow-hidden shadow-lg">
-              <img
-                src={wisata1}
-                alt="Kebun Duren"
-                className="h-72 w-full object-cover"
-              />
+            {wisata.length === 0 ? (
 
-              <div className="p-6">
-                <h3 className="text-2xl font-bold">
-                  Kebun Duren
-                </h3>
-
-                <p className="mt-3 text-gray-600">
-                  Menikmati pengalaman wisata kebun durian
-                  langsung dari perkebunan masyarakat.
-                </p>
+              <div className="col-span-3 text-center py-10 text-gray-500">
+                Belum ada data wisata.
               </div>
-            </div>
 
-            <div className="bg-white rounded-3xl overflow-hidden shadow-lg">
-              <img
-                src={wisata2}
-                alt="Air Terjun"
-                className="h-72 w-full object-cover"
-              />
+            ) : (
 
-              <div className="p-6">
-                <h3 className="text-2xl font-bold">
-                  Air Terjun
-                </h3>
+              wisata.map((item) => (
 
-                <p className="mt-3 text-gray-600">
-                  Keindahan alam yang masih asri dan
-                  menjadi daya tarik wisatawan.
-                </p>
-              </div>
-            </div>
+                <div
+                  key={item.id}
+                  className="bg-white rounded-3xl overflow-hidden shadow-lg hover:-translate-y-2 transition duration-300"
+                >
 
-            <div className="bg-white rounded-3xl overflow-hidden shadow-lg">
-              <img
-                src={wisata3}
-                alt="Bukit"
-                className="h-72 w-full object-cover"
-              />
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="h-72 w-full object-cover"
+                  />
 
-              <div className="p-6">
-                <h3 className="text-2xl font-bold">
-                  Bukit Karang Jaya
-                </h3>
+                  <div className="p-6">
 
-                <p className="mt-3 text-gray-600">
-                  Panorama perbukitan hijau dengan
-                  pemandangan alam yang memukau.
-                </p>
-              </div>
-            </div>
+                    <span className="inline-block bg-yellow-100 text-yellow-700 text-xs font-semibold px-3 py-1 rounded-full">
+                      {item.category}
+                    </span>
+
+                    <h3 className="text-2xl font-bold mt-4">
+                      {item.title}
+                    </h3>
+
+                    <p className="mt-3 text-gray-600 line-clamp-3">
+                      {item.description}
+                    </p>
+
+                    <p className="mt-5 text-sm text-gray-500">
+                      📍 {item.location}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              ))
+
+            )}
+
+          </div>
+
+          <div className="text-center mt-14">
+
+            <Link
+              to="/wisata"
+              className="inline-flex bg-green-800 hover:bg-green-900 text-white px-8 py-4 rounded-full font-semibold transition"
+            >
+              Lihat Semua Wisata
+            </Link>
 
           </div>
 
@@ -218,6 +255,7 @@ function Home() {
         <div className="max-w-7xl mx-auto px-6">
 
           <div className="text-center mb-16">
+
             <p className="uppercase tracking-[6px] text-yellow-600">
               Komoditas Unggulan
             </p>
@@ -225,6 +263,7 @@ function Home() {
             <h2 className="text-5xl font-bold mt-4">
               Hasil Bumi Karang Jaya
             </h2>
+
           </div>
 
           <div className="grid md:grid-cols-4 gap-8">
@@ -232,7 +271,7 @@ function Home() {
             <div>
               <img
                 src={duren}
-                alt=""
+                alt="Durian"
                 className="h-80 w-full object-cover rounded-3xl"
               />
 
@@ -244,7 +283,7 @@ function Home() {
             <div>
               <img
                 src={madu}
-                alt=""
+                alt="Madu"
                 className="h-80 w-full object-cover rounded-3xl"
               />
 
@@ -256,7 +295,7 @@ function Home() {
             <div>
               <img
                 src={duku}
-                alt=""
+                alt="Duku"
                 className="h-80 w-full object-cover rounded-3xl"
               />
 
@@ -268,7 +307,7 @@ function Home() {
             <div>
               <img
                 src={cokelat}
-                alt=""
+                alt="Cokelat"
                 className="h-80 w-full object-cover rounded-3xl"
               />
 
@@ -284,6 +323,7 @@ function Home() {
 
       {/* CTA */}
       <section className="bg-green-900 py-24 text-center text-white">
+
         <div className="max-w-4xl mx-auto px-6">
 
           <h2 className="text-5xl font-bold">
@@ -295,12 +335,17 @@ function Home() {
             Desa Karang Jaya.
           </p>
 
-          <button className="mt-10 bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-4 rounded-full font-semibold">
+          <Link
+            to="/wisata"
+            className="inline-block mt-10 bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-4 rounded-full font-semibold"
+          >
             Kunjungi Sekarang
-          </button>
+          </Link>
 
         </div>
+
       </section>
+
       <FAQ />
     </>
   );

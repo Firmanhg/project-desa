@@ -1,30 +1,33 @@
-import heroImage from "../assets/hero.jpg";
+import { useEffect, useState } from "react";
 
-import wisata1 from "../assets/wisata/kebun-duren.jpg";
-import wisata2 from "../assets/wisata/air-terjun.jpg";
-import wisata3 from "../assets/wisata/bukit.jpg";
-
-import duren from "../assets/komoditas/duren.jpg";
-import madu from "../assets/komoditas/madu.jpg";
-import duku from "../assets/komoditas/duku.jpg";
-import cokelat from "../assets/komoditas/cokelat.jpg";
+import { getAllGaleri } from "../services/galeriService";
+import type { Galeri as GaleriType } from "../types/galeri";
 
 function Galeri() {
-  const images = [
-    heroImage,
-    wisata1,
-    wisata2,
-    wisata3,
-    duren,
-    madu,
-    duku,
-    cokelat,
-  ];
+  const [galeri, setGaleri] = useState<GaleriType[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadGaleri = async () => {
+      try {
+        const data = await getAllGaleri();
+
+        setGaleri(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadGaleri();
+  }, []);
 
   return (
     <>
       {/* HERO */}
       <section className="pt-32 pb-24 bg-green-900 text-white">
+
         <div className="max-w-7xl mx-auto px-6 text-center">
 
           <p className="uppercase tracking-[6px] text-yellow-400">
@@ -41,6 +44,7 @@ function Galeri() {
           </p>
 
         </div>
+
       </section>
 
       {/* GALLERY */}
@@ -60,92 +64,131 @@ function Galeri() {
 
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {loading ? (
 
-            {images.map((image, index) => (
-              <div
-                key={index}
-                className="group overflow-hidden rounded-3xl shadow-lg bg-white"
-              >
-                <img
-                  src={image}
-                  alt={`Galeri ${index + 1}`}
-                  className="h-80 w-full object-cover group-hover:scale-110 transition duration-500"
-                />
-              </div>
-            ))}
-
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* HIGHLIGHT */}
-      <section className="bg-white py-24">
-
-        <div className="max-w-6xl mx-auto px-6">
-
-          <div className="bg-green-900 rounded-[40px] overflow-hidden">
-
-            <div className="grid md:grid-cols-2">
-
-              <img
-                src={heroImage}
-                alt="Karang Jaya"
-                className="h-full w-full object-cover"
-              />
-
-              <div className="p-12 text-white flex flex-col justify-center">
-
-                <p className="uppercase tracking-[6px] text-yellow-400">
-                  Highlight
-                </p>
-
-                <h2 className="text-4xl md:text-5xl font-bold mt-4">
-                  Karang Jaya Dalam Satu Bingkai
-                </h2>
-
-                <p className="mt-6 text-gray-300 leading-relaxed">
-                  Setiap sudut Desa Karang Jaya menyimpan
-                  keindahan alam, hasil bumi yang melimpah,
-                  dan keramahan masyarakat yang menjadi daya
-                  tarik tersendiri bagi setiap pengunjung.
-                </p>
-
-              </div>
-
+            <div className="text-center py-20 text-gray-500">
+              Memuat galeri...
             </div>
 
+          ) : (             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+            {galeri.length === 0 ? (
+
+              <div className="col-span-full text-center py-20 text-gray-500">
+                Belum ada foto galeri.
+              </div>
+
+            ) : (
+
+              galeri.map((item) => (
+
+                <div
+                  key={item.id}
+                  className="group overflow-hidden rounded-3xl shadow-lg bg-white"
+                >
+
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="h-80 w-full object-cover group-hover:scale-110 transition duration-500"
+                  />
+
+                  <div className="p-5">
+
+                    <h3 className="text-xl font-bold">
+                      {item.title}
+                    </h3>
+
+                  </div>
+
+                </div>
+
+              ))
+
+            )}
+
           </div>
 
-        </div>
+        )}
 
-      </section>
+      </div>
 
-      {/* CTA */}
-      <section className="bg-[#f8f6f1] py-24">
+    </section>
 
-        <div className="max-w-4xl mx-auto px-6 text-center">
+          {/* HIGHLIGHT */}
+          <section className="bg-white py-24">
 
-          <h2 className="text-5xl font-bold">
-            Abadikan Momen di Karang Jaya
-          </h2>
+<div className="max-w-6xl mx-auto px-6">
 
-          <p className="mt-6 text-lg text-gray-600">
-            Nikmati keindahan wisata dan potensi desa
-            yang siap menyambut setiap pengunjung.
-          </p>
+  <div className="bg-green-900 rounded-[40px] overflow-hidden">
 
-          <button className="mt-10 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-8 py-4 rounded-full">
-            Kunjungi Sekarang
-          </button>
+    <div className="grid md:grid-cols-2">
 
-        </div>
+      {galeri.length > 0 ? (
 
-      </section>
-    </>
-  );
+        <img
+          src={galeri[0].image}
+          alt={galeri[0].title}
+          className="h-full w-full object-cover"
+        />
+
+      ) : (
+
+        <div className="h-[400px] bg-gray-300"></div>
+
+      )}
+
+      <div className="p-12 text-white flex flex-col justify-center">
+
+        <p className="uppercase tracking-[6px] text-yellow-400">
+          Highlight
+        </p>
+
+        <h2 className="text-4xl md:text-5xl font-bold mt-4">
+          Karang Jaya Dalam Satu Bingkai
+        </h2>
+
+        <p className="mt-6 text-gray-300 leading-relaxed">
+          Dokumentasi berbagai sudut keindahan Desa
+          Karang Jaya mulai dari wisata alam,
+          komoditas unggulan, hingga aktivitas
+          masyarakat yang menjadi daya tarik desa.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+</section>
+
+{/* CTA */}
+<section className="bg-[#f8f6f1] py-24">
+
+<div className="max-w-4xl mx-auto px-6 text-center">
+
+  <h2 className="text-5xl font-bold">
+    Abadikan Momen di Karang Jaya
+  </h2>
+
+  <p className="mt-6 text-lg text-gray-600">
+    Nikmati keindahan wisata dan potensi desa
+    yang siap menyambut setiap pengunjung.
+  </p>
+
+  <button className="mt-10 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-8 py-4 rounded-full">
+    Kunjungi Sekarang
+  </button>
+
+</div>
+
+</section>
+
+</>
+);
 }
 
 export default Galeri;
